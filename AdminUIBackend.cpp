@@ -31,3 +31,9 @@ bool validatePassword(const char* password, const char* confirmPassword) {
 	}
 	return true;
 }
+
+int generateID() {
+	int id = 12345;
+	return id++;
+	id = id++;
+}

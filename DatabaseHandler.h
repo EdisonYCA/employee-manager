@@ -8,9 +8,9 @@ void createPunchTable(const char* databaseName); // create table to record punch
 void createEmployeeTable(const char* databaseName); // create table to record employee information
 void viewDatabase(const char* databaseName); // show all records in database
 static int callback(void* NotUsed, int agrc, char** argv, char** azColName);
-void insertData(const char* databaseName); // insert data into database
-void insertEmployee(const char* databaseName, const char* firstName, const char* lastName, const char* password);
-
+//void insertData(const char* databaseName); // insert data into database
+void insertEmployee(const char* databaseName, int employeeID, const char* firstName, const char* lastName, const char* password);
+void searchForEmployee(const char* databaseName, int employeeID, const char* password);
 
 
 

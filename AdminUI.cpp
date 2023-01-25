@@ -110,7 +110,7 @@ void displaySignUpMenu() {
 	}
 
 	initalizeDatabase();
-	insertEmployee("PunchesDB.db", firstName.c_str(), lastName.c_str(), password.c_str());
+	insertEmployee("PunchesDB.db", generateID(), firstName.c_str(), lastName.c_str(), password.c_str());
 	cout << firstName << "'s ID: " << endl;
 }
 
