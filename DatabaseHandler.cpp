@@ -18,6 +18,7 @@ void setLastName(const char* databaseName, int id, const char* password, const c
 void setPayRate(const char* databaseName, int id, const char* password, float newPayRate);
 void setId(const char* databaseName, int id, const char* password, int newId);
 void setPassword(const char* databaseName, int id, const char* password, const char* newPassword);
+void deleteEmployee(const char* databaseName, int id);
 
 /*
 int main() {
@@ -276,5 +277,21 @@ void setPassword(const char* databaseName, int id, const char* password, const c
     }
 }
 
+void deleteEmployee(const char* databaseName, int id) {
+    sqlite3* db;
+
+    string query = "DELETE FROM EMPLOYEES WHERE Id = " + to_string(id);
+
+    sqlite3_open(databaseName, &db);
+    char* err;
+    int result = sqlite3_exec(db, query.c_str(), NULL, 0, &err);
+
+    if (result != SQLITE_OK) {
+        cout << "Error deleting employee: " << err << endl;
+    }
+    else {
+        cout << "Deleted employee successfully!" << endl;
+    }
+}
 
 
