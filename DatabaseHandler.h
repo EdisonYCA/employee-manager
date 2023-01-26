@@ -10,8 +10,11 @@ void viewDatabase(const char* databaseName); // show all records in database
 static int callback(void* NotUsed, int agrc, char** argv, char** azColName);
 //void insertData(const char* databaseName); // insert data into database
 void insertEmployee(const char* databaseName, int employeeID, const char* firstName, const char* lastName, const char* password);
-void searchForEmployee(const char* databaseName, int employeeID, const char* password);
-
-
+bool searchForEmployee(const char* databaseName, int employeeID, const char* password);
+void setFirstName(const char* databaseName, int id, const char* password, const char* newFirstName);
+void setLastName(const char* databaseName, int id, const char* password, const char* newLastName);
+void setPayRate(const char* databaseName, int id, const char* password, float newPayRate);
+void setId(const char* databaseName, int id, const char* password, int newId);
+void setPassword(const char* databaseName, int id, const char* password, const char* newPassword);
 
 #endif // !DATABASEHANDLER_H_INCLUDE;
