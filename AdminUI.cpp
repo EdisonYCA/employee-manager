@@ -38,23 +38,6 @@ int displayDefaultMenu() {
 	cout << "-> ";
 	cin >> res;
 	return res;
-
-	//while (true) {
-		//try {
-			//if (!isdigit(res)) {
-				//throw "Invalid menu option.";
-				//if(floor(int(res)) < 1 or floor(int(res)) > 4) {
-					//throw "Invalid menu option.";
-				//}
-			//}
-			//else {
-				//return res;
-			//}
-		//}
-		//catch (const char* e) {
-		//	cout << e << " Please try again.\n" << endl;
-		//}
-	//}
 }
 
 void handleDefaultMenu(int response) {
@@ -121,12 +104,15 @@ void deleteEmployeeUI() {
 	cout << "Enter ID: ";
 	cin >> id;
 
-	// validate ID
 	string confirm;
-	cout << "Are you sure you want to remove [employee name] from database [y/n]: ";
+	cout << "Are you sure you want to remove this from database [y/n]: ";
 	cin >> confirm;
-	// delete employee
-	cout << "operation successful" << endl;
+	
+	if (confirm == "y") {
+		deleteEmployee("PunchesDB.db", id);
+	}
+
+	return;
 }
 
 void loginUI() {
