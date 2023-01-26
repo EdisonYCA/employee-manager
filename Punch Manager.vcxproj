@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AdminUI.cpp" />
+    <ClCompile Include="AdminUIBackend.cpp" />
     <ClCompile Include="DatabaseHandler.cpp" />
     <ClCompile Include="sqlite\shell.c" />
     <ClCompile Include="sqlite\sqlite3.c" />
