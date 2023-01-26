@@ -5,7 +5,6 @@
 bool validateFirstName(const char* firstName);
 bool validateLastName(const char* lastName);
 bool validatePassword(const char* password, const char* confirmPassword);
-int generateID();
 
 
 #endif
