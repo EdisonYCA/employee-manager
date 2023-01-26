@@ -8,10 +8,10 @@ using namespace std;
 int displayDefaultMenu(); // interface for default menu
 void handleDefaultMenu(int response); // handle responses from default menu
 void displaySignUpMenu(); // display employee sign up interface
-void displaySignInMenu(); // display employee sign in interface
+void displaySignInMenu(int id, string password); // display employee sign in interface
 void deleteEmployeeUI(); // interface for deleting an employee
 void loginUI(); // interface for logining into a user account
-void handleResponseFromSignIn(int response); // handle responses from sign in menu
+void handleResponseFromSignIn(int response, int id, string password); // handle responses from sign in menu
 
 
 
@@ -63,7 +63,7 @@ void handleDefaultMenu(int response) {
 		displaySignUpMenu();
 		break;
 	case 2:
-		displaySignInMenu();
+		loginUI();
 		break;
 	case 3:
 		deleteEmployeeUI();
@@ -72,8 +72,7 @@ void handleDefaultMenu(int response) {
 	return;
 }
 
-void displaySignInMenu() {
-	loginUI(); // if login ui is true
+void displaySignInMenu(int id, string password) {
 
 	int responseFromSignIn = 0;
 	while (responseFromSignIn != 6) {
@@ -87,7 +86,7 @@ void displaySignInMenu() {
 		cout << "-> ";
 		cin >> responseFromSignIn;
 
-		handleResponseFromSignIn(responseFromSignIn);
+		handleResponseFromSignIn(responseFromSignIn, id, password);
 		cout << endl;
 	}
 }
@@ -110,7 +109,7 @@ void displaySignUpMenu() {
 	}
 
 	initalizeDatabase();
-	insertEmployee("PunchesDB.db", generateID(), firstName.c_str(), lastName.c_str(), password.c_str());
+	insertEmployee("PunchesDB.db", 12345, firstName.c_str(), lastName.c_str(), password.c_str());
 	cout << firstName << "'s ID: " << endl;
 }
 
@@ -133,18 +132,66 @@ void deleteEmployeeUI() {
 void loginUI() {
 	int id;
 	string password;
+	bool searchForEmployeeRes = false;
 
-	cout << endl;
-	cout << "Enter ID: ";
-	cin >> id;
-	cout << "Enter password: ";
-	cin >> password;
-	// validate credentials BE func
-	cout << "log in successful" << endl;
-	cout << endl;
+	cout << "Enter a valid ID and password below." << endl;
+
+	while (!searchForEmployeeRes) {
+		cout << endl;
+		cout << "Enter ID: ";
+		cin >> id;
+		cout << "Enter password: ";
+		cin >> password;
+		searchForEmployeeRes = searchForEmployee("PunchesDB.db", id, password.c_str());
+	}
+
+	displaySignInMenu(id, password);
 }
 
-void handleResponseFromSignIn(int res) {
-	return;
-	// user object setters for case handling
+void handleResponseFromSignIn(int res, int id, string password) {
+	switch (res) {
+	case 1:
+	{
+		float payRate;
+		cout << "Enter updated pay rate: ";
+		cin >> payRate;
+		setPayRate("PunchesDB.db", id, password.c_str(), payRate);
+		break;
+	}
+
+	case 2:
+	{
+		string firstName;
+		cout << "Enter updated first name: ";
+		cin >> firstName;
+		setFirstName("PunchesDB.db", id, password.c_str(), firstName.c_str());
+		break;
+	}
+	case 3:
+	{
+		string lastName;
+		cout << "Enter updated last name: ";
+		cin >> lastName;
+		setLastName("PunchesDB.db", id, password.c_str(), lastName.c_str());
+		break;
+	}
+
+	case 4:
+	{
+		int newId;
+		cout << "Enter updated id: ";
+		cin >> newId;
+		setId("PunchesDB.db", id, password.c_str(), newId);
+		break;
+	}
+	case 5:
+	{
+		string password;
+		cout << "Enter updated password: ";
+		cin >> password;
+		setPassword("PunchesDB.db", id, password.c_str(), password.c_str());
+		break;
+	}
+		
+	}
 }
