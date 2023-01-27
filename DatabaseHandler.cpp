@@ -2,6 +2,8 @@
 #include "DatabaseHandler.h"
 #include "sqlite/sqlite3.h"
 #include <string>
+#include <ctime>
+#pragma warning(disable : 4996)
 using namespace std;
 
 void createDB(const char* databaseName); // create a database
@@ -19,14 +21,17 @@ void setPayRate(const char* databaseName, int id, const char* password, float ne
 void setId(const char* databaseName, int id, const char* password, int newId);
 void setPassword(const char* databaseName, int id, const char* password, const char* newPassword);
 void deleteEmployee(const char* databaseName, int id);
+void storePunchIn(const char* databaseName);
+void checkPayPeriod(string payPeriodEnd);
+string formatMonth(int month);
+string formatDay(int day);
 
-/*
+string payPeriodEnd = "2023-01-26";
+
 int main() {
-    initalizeDatabase();
-    searchForEmployee("PunchesDB.db", 12345, "Ma3a6uev0!");
+    checkPayPeriod(payPeriodEnd);
     return 0;
 }
-*/
 
 void initalizeDatabase()
 {
@@ -52,12 +57,12 @@ void createPunchTable(const char* databaseName) {
 
     string query = "CREATE TABLE IF NOT EXISTS PUNCHES("
         "Id INTEGER, "
-        "PunchDate DATE, "
-        "InTime TIME, "
-        "OutTime TIME, "
+        "PunchDate TEXT, "
+        "InTime TEXT, "
+        "OutTime TEXT, "
         "Hours FLOAT, "
-        "PayPeriodStart DATE, "
-        "PayPeriodEnd DATE, "
+        "PayPeriodStart TEXT, "
+        "PayPeriodEnd TEXT, "
         "FOREIGN KEY(Id) REFERENCES EMPLOYEES(Id));";
 
     sqlite3_open(databaseName, &db);
@@ -175,16 +180,18 @@ bool searchForEmployee(const char* databaseName, int employeeID, const char* pas
     sqlite3_open(databaseName, &db);
 
     char* err;
-    cout << "Retrieving employee information..." << endl;
-    int result = sqlite3_exec(db, query.c_str(), callback, NULL, &err);
+    int result = sqlite3_exec(db, query.c_str(), NULL, NULL, &err);
 
     if (result != SQLITE_OK) {
         cout << "Error: " << err;
         return false;
     }
+    else {
+        cout << "Logged In Succesfully!" << endl;
+        return true;
+    }
 
     sqlite3_close(db);
-    return true;
 }
 
 void setFirstName(const char* databaseName, int id, const char *password, const char *newFirstName) {
@@ -294,4 +301,77 @@ void deleteEmployee(const char* databaseName, int id) {
     }
 }
 
+void storePunchIn(const char* databaseName) {
+    // store todays date, and format it into YYYY-MM-DD
+    time_t now = time(NULL);
+    struct tm nowLocal;
+
+    nowLocal = *localtime(&now);
+
+    string date;
+    string timeIn;
+
+    date += to_string(nowLocal.tm_year + 1900) + "-";
+    date += formatMonth(nowLocal.tm_mon + 1) + "-";
+    date += formatDay(nowLocal.tm_mday);
+    timeIn += to_string(nowLocal.tm_hour) + ":";
+    timeIn += to_string(nowLocal.tm_min) + ":";
+    timeIn += to_string(nowLocal.tm_sec);
+
+    // make query
+    sqlite3* db;
+
+    string query = string("INSERT INTO PUNCHES(PunchDate, InTime) VALUES(") + "\"" + date + "\", " + "\"" + timeIn + "\"" + ");";
+
+    sqlite3_open(databaseName, &db);
+    char* err;
+    int result = sqlite3_exec(db, query.c_str(), NULL, 0, &err);
+
+    if (result != SQLITE_OK) {
+        cout << "Error punching in: " << err << endl;
+    }
+    else {
+        cout << "Punched in" << endl;
+    }
+}
+
+string formatMonth(int month) {
+    if (month < 10) {
+        return string("0" + to_string(month));
+    }
+    else {
+        return to_string(month);
+    }
+}
+
+string formatDay(int day) {
+    if (day < 10) {
+        return string("0" + to_string(day));
+    }
+    else {
+        return to_string(day);
+    }
+}
+
+void checkPayPeriod(string payPeriodEnd) {
+    time_t now = time(NULL);
+    struct tm nowLocal;
+
+    nowLocal = *localtime(&now);
+
+    string date;
+
+    date += to_string(nowLocal.tm_year + 1900) + "-";
+    date += formatMonth(nowLocal.tm_mon + 1) + "-";
+    date += formatDay(nowLocal.tm_mday);
+
+    if (payPeriodEnd == date) {
+        cout << "Today is the end of the pay period";
+
+        string newPayPeriod;
+        date += to_string(nowLocal.tm_year + 1900) + "-";
+        date += formatMonth(nowLocal.tm_mon + 1) + "-";
+        date += formatDay(nowLocal.tm_mday);
+    }
+}
 

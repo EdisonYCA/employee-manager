@@ -17,5 +17,6 @@ void setPayRate(const char* databaseName, int id, const char* password, float ne
 void setId(const char* databaseName, int id, const char* password, int newId);
 void setPassword(const char* databaseName, int id, const char* password, const char* newPassword);
 void deleteEmployee(const char* databaseName, int id);
+void storeNowDate(const char* databaseName);
 
 #endif // !DATABASEHANDLER_H_INCLUDE;
