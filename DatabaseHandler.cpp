@@ -3,6 +3,8 @@
 #include "sqlite/sqlite3.h"
 #include <string>
 #include <ctime>
+#include <iomanip>
+#include <sstream>
 #pragma warning(disable : 4996)
 using namespace std;
 
@@ -25,11 +27,13 @@ void storePunchIn(const char* databaseName);
 void checkPayPeriod(string payPeriodEnd);
 string formatMonth(int month);
 string formatDay(int day);
+void storePunchOut(const char* databaseName);
+void calculateHrsWorked();
 
 string payPeriodEnd = "2023-01-26";
 
 int main() {
-    checkPayPeriod(payPeriodEnd);
+    calculateHrsWorked();
     return 0;
 }
 
@@ -374,4 +378,64 @@ void checkPayPeriod(string payPeriodEnd) {
         date += formatDay(nowLocal.tm_mday);
     }
 }
+
+void storePunchOut(const char* databaseName) {
+    // store todays date, and format it into YYYY-MM-DD
+    time_t now = time(NULL);
+    struct tm nowLocal;
+
+    nowLocal = *localtime(&now);
+
+    string date = "2023-01-26";
+    string timeOut;
+
+    /*
+    date += to_string(nowLocal.tm_year + 1900) + "-";
+    date += formatMonth(nowLocal.tm_mon + 1) + "-";
+    date += formatDay(nowLocal.tm_mday);
+    */
+    timeOut += to_string(nowLocal.tm_hour) + ":";
+    timeOut += to_string(nowLocal.tm_min) + ":";
+    timeOut += to_string(nowLocal.tm_sec);
+
+    // make query
+    sqlite3* db;
+
+    string query = string("UPDATE PUNCHES SET OutTime = ") + "\"" + timeOut + "\"" + " WHERE PunchDate = " + "\"" + date + "\"";
+
+    sqlite3_open(databaseName, &db);
+    char* err;
+    int result = sqlite3_exec(db, query.c_str(), NULL, 0, &err);
+
+    if (result != SQLITE_OK) {
+        cout << "Error punching out: " << err << endl;
+    }
+    else {
+        cout << "Punched out" << endl;
+    }
+}
+
+void calculateHrsWorked() {
+    string TimeIn = "13:15:00";
+    string TimeOut = "15:15:00";
+
+    struct tm tmIn = { 0 };
+    struct tm tmOut = { 0 };
+
+    stringstream ssIn(TimeIn);
+    stringstream ssOut(TimeOut);
+
+    ssIn >> get_time(&tmIn, "%R");
+    ssOut >> get_time(&tmOut, "%R");
+
+    time_t timeIn_t = mktime(&tmIn);
+    time_t timeOut_t = mktime(&tmOut);
+
+    cout << timeIn_t;
+
+    double secondsWorked;
+    cout << "Seconds worked: " << difftime(timeOut_t, timeIn_t);
+}
+
+
 
